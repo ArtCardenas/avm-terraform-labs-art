@@ -378,5 +378,5 @@ Finally we will clean up everything we have created in the lab.
 * AVM Documentation: [Azure Verified Modules](https://aka.ms/avm)
 
 ## to upload to Repo
-git remote add art-repo https://github.com/ArtCardenas/avm-terraform-labs-art.git
-git push --set-upstream art-repo main
+1. git remote add art-repo https://github.com/ArtCardenas/avm-terraform-labs-art.git
+1. git push --set-upstream art-repo main
