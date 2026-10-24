@@ -11,6 +11,20 @@ variable "location" {
   }
 }
 
+variable "resource_name_location_short" {
+  type        = string
+  description = "The short name segment for the location"
+  default     = ""
+  validation {
+    condition     = length(var.resource_name_location_short) == 0 || can(regex("^[a-z]+$", var.resource_name_location_short))
+    error_message = "The short name segment for the location must only contain lowercase letters"
+  }
+  validation {
+    condition     = length(var.resource_name_location_short) <= 3
+    error_message = "The short name segment for the location must be 3 characters or less"
+  }
+}
+
 variable "resource_name_workload" {
   type        = string
   description = "The name segment for the workload"
@@ -48,16 +62,24 @@ variable "resource_name_sequence_start" {
     error_message = "The number must be between 1 and 999"
   }
 }
+
 variable "resource_name_templates" {
   type        = map(string)
   description = "A map of resource names to use"
   default = {
-    resource_group_name          = "rg-$${workload}-$${environment}-$${location}-$${sequence}"
-    log_analytics_workspace_name = "law-$${workload}-$${environment}-$${location}-$${sequence}"
-    virtual_network_name         = "vnet-$${workload}-$${environment}-$${location}-$${sequence}"
-    network_security_group_name  = "nsg-$${workload}-$${environment}-$${location}-$${sequence}"
-    nat_gateway_name             = "nat-$${workload}-$${environment}-$${location}-$${sequence}"
-    nat_gateway_public_ip_name   = "pip-nat-$${workload}-$${environment}-$${location}-$${sequence}"
+    resource_group_name                 = "rg-$${workload}-$${environment}-$${location}-$${sequence}"
+    log_analytics_workspace_name        = "law-$${workload}-$${environment}-$${location}-$${sequence}"
+    virtual_network_name                = "vnet-$${workload}-$${environment}-$${location}-$${sequence}"
+    network_security_group_name         = "nsg-$${workload}-$${environment}-$${location}-$${sequence}"
+    nat_gateway_name                    = "nat-$${workload}-$${environment}-$${location}-$${sequence}"
+    nat_gateway_public_ip_name          = "pip-nat-$${workload}-$${environment}-$${location}-$${sequence}"
+    key_vault_name                      = "kv$${workload}$${environment}$${location_short}$${sequence}$${uniqueness}"
+    storage_account_name                = "sto$${workload}$${environment}$${location_short}$${sequence}$${uniqueness}"
+    user_assigned_managed_identity_name = "uami-$${workload}-$${environment}-$${location}-$${sequence}"
+    virtual_machine_name                = "vm-$${workload}-$${environment}-$${location}-$${sequence}"
+    network_interface_name              = "nic-$${workload}-$${environment}-$${location}-$${sequence}"
+    bastion_host_public_ip_name         = "pip-bas-$${workload}-$${environment}-$${location}-$${sequence}"
+    bastion_host_name                   = "bas-$${workload}-$${environment}-$${location}-$${sequence}"
   }
 }
 
@@ -78,4 +100,25 @@ variable "subnets" {
 variable "tags" {
   type        = map(string)
   description = "A map of tags to add to all resources"
+}
+
+variable "enable_encryption_at_host" {
+  type        = bool
+  description = "Enable encryption at host"
+  default     = false
+}
+
+variable "virtual_machine_sku" {
+  type        = string
+  description = "The size of the virtual machine to create"
+}
+
+variable "virtual_machine_image" {
+  type = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+  description = "The image reference for the virtual machine"
 }
